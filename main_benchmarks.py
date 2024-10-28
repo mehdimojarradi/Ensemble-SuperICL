@@ -255,9 +255,9 @@ if __name__ == "__main__":
                 f"\n{args.num_examples}-shot ICL on dataset: {args.dataset}, with LLM: {args.llm}\nICL Accuracy: {accuracy}%\nHallucination rate: {hallucination_rate}%"
             )
 
-        file_name = f"icl_{args.llm}_{args.num_examples}shot_{args.dataset}_base_format_instruction_{args.seed}"
-        print(f'Saving results in data/{args.context_source}_{args.test_source}/icl/{args.dataset}/{file_name}.json')
-        with open(f'data/{args.context_source}_{args.test_source}/icl/{args.dataset}/{file_name}.json', 'w') as f:
+        file_name = f"icl_{args.llm}_{args.num_examples}shot_{args.dataset}_{args.seed}"
+        print(f'Saving results in data/icl/{args.dataset}/{file_name}.json')
+        with open(f'data/icl/{args.dataset}/{file_name}.json', 'w') as f:
             json.dump(data, f)
 
     batch_size = args.batch_size
@@ -266,11 +266,7 @@ if __name__ == "__main__":
         print(f"\nLoading LLM: {args.llm} ({full_llm_path})")
         tokenizer, model = get_model(full_llm_path)
 
-        if dataset_name not in args.plugins[0]:
-            finetune_type = extract_finetune_type(args.plugins)
-            context_json = f"data/plugin_data/adj_finetune/{args.dataset}/{args.dataset}_context_{args.context_source}_{args.seed}_ftype_{finetune_type}.json"
-        else:
-            context_json = f"data/plugin_data/{args.dataset}/{args.dataset}_context_{args.context_source}_{args.seed}.json"
+        context_json = f"data/plugin_data/{args.dataset}/{args.dataset}_context_{args.context_source}_{args.seed}.json"
         in_context_supericl_prompt = extract_super_icl_prompt(context_json, args.plugins, args.num_examples)
 
         supericl_predictions = []
@@ -278,16 +274,12 @@ if __name__ == "__main__":
         batch = []
         data = []
 
-        if dataset_name not in args.plugins[0]:
-            finetune_type = extract_finetune_type(args.plugins)
-            test_json = f"data/plugin_data/adj_finetune/{args.dataset}/{args.dataset}_{args.test_source}_examples_ftype_{finetune_type}.json"
-        else:
-            test_json = f"data/plugin_data/{args.dataset}/{args.dataset}_{args.test_source}_examples.json"
+        test_json = f"data/plugin_data/{args.dataset}/{args.dataset}_{args.test_source}_examples.json"
 
         print(f"\nRunning {args.num_examples}-shot SuperICL on dataset: {args.dataset}, with LLM: {args.llm}, with plugin models: {args.plugins}")
         for i, example in enumerate(tqdm(test_source)):
             valid_prompt = extract_test_prompt(test_json, args.plugins, i)
-            ## llama3 prompt format
+
             instruction = generate_instruction(args.dataset, args.plugins)
             input_prompt = [
                 {"role": "system", "content": instruction + in_context_supericl_prompt},
@@ -295,14 +287,14 @@ if __name__ == "__main__":
                 ]
             batch.append(input_prompt)
             if len(batch) == batch_size or i+1==len(test_source):
-                responses = run_llama3( # run_model is base, run_llama3 to use specified prompt format
+                responses = run_llama3(
                     tokenizer,
                     model,
                     prompt=batch,
-                    temperature=1, # 1 is base and default, 0.01 is alt; Adjusts randomness of outputs, greater than 1 is random and 0 is deterministic
+                    temperature=1, # adjusts randomness of outputs, greater than 1 is random and 0 is deterministic
                     max_new_tokens=10,
-                    top_p=0.5, # 0.5 is base, 0.9 is alt, 1.0 is default; When decoding text, samples from the top p percentage of most likely tokens
-                    # top_k=1, # default is 50; When decoding text, samples from the top k most likely tokens
+                    top_p=0.5, # when decoding text, samples from the top p percentage of most likely tokens
+                    # top_k=1, # when decoding text, samples from the top k most likely tokens
                     repetition_penalty=1, #default
                     num_beams=1, #default
                     num_return_sequences=1 #default
@@ -353,16 +345,8 @@ if __name__ == "__main__":
 
         plugins = extract_first_letters(args.plugins)
         directory = 'supericl' + str(len(args.plugins))
-        file_name = f"supericl_{plugins}_{args.llm}_{args.num_examples}shot_{args.dataset}_base_format_instruction_{args.seed}"
+        file_name = f"supericl_{plugins}_{args.llm}_{args.num_examples}shot_{args.dataset}{args.seed}"
 
-        if dataset_name not in args.plugins[0]:
-            finetune_type = extract_finetune_type(args.plugins)
-            file_name += f"_{finetune_type}_finetune"
-            print(f'Saving results in data/{args.context_source}_{args.test_source}/adj_finetune/{args.dataset}/{finetune_type}_finetune/{directory}/{file_name}.json')
-            with open(f'data/{args.context_source}_{args.test_source}/adj_finetune/{args.dataset}/{finetune_type}_finetune/{directory}/{file_name}.json', 'w') as f:
-                json.dump(data, f)
-        else:    
-            # print(f'Saving results in data/{args.context_source}_{args.test_source}/{directory}/{args.dataset}/{file_name}.json')
-            print(f'Saving results in data/zero_shot/{args.dataset}/{directory}/{file_name}.json')
-            with open(f'data/zero_shot/{args.dataset}/{directory}/{file_name}.json', 'w') as f:
-                json.dump(data, f)
+        print(f'Saving results in data/{directory}/{args.dataset}/{file_name}.json')
+        with open(f'data/{directory}/{args.dataset}/{file_name}.json', 'w') as f:
+            json.dump(data, f)
