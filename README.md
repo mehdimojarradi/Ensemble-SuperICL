@@ -1,7 +1,7 @@
 ## Ensemble Super In-Context Learning
 Code for [Improving In-Context Learning with Small Language Model Ensembles](url), presented at NeurIPS 2024 in the workshop on [Adaptive Foundation Models](https://adaptive-foundation-models.org/).
 
-![image](https://github.com/user-attachments/assets/78107367-9127-4390-894e-9cddf64b90b8)
+![schematic of ensemble super in-context learning](schematic.png)
 
 Ensemble Super In-Context Learning (Ensemble SuperICL) improves few-shot prompting by ensembling the predictions and confidence scores of several expert small language models.
 
