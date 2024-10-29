@@ -73,7 +73,8 @@ To reproduce the best performing model results as presented in Table 2, use the 
 @article{mojarradi2024improving,
   title={Improving In-Context Learning with Small Language Model Ensembles},
   author={M. Mehdi Mojarradi and Lingyi Yang and Robert McCraith and Adam Mahdi},
-  journal={NeurIPS 2024 Workshop on Adaptive Foundation Models},
+  journal={Advances in Neural Information Processing Systems (NeurIPS): Workshop on Adaptive Foundation Models},
+  volume={38}
   year={2024}
 }
 ```
