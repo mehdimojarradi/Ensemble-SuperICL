@@ -3,7 +3,7 @@ Code for [Improving In-Context Learning with Small Language Model Ensembles](url
 
 ![schematic of ensemble super in-context learning](schematic.png)
 
-Ensemble Super In-Context Learning (Ensemble SuperICL) improves few-shot prompting by ensembling the predictions and confidence scores of several expert small language models.
+Ensemble SuperICL offers cheap and effective domain-specialisation in LLMs by combining the predictions and confidence scores of several small language models, outperforming baselines on a medical labelling task and NLP benchmarks.
 
 ## How to run code
 
