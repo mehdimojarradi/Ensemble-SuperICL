@@ -1,5 +1,5 @@
 ## Ensemble Super In-Context Learning
-Code for [Improving In-Context Learning with Small Language Model Ensembles](url), presented at NeurIPS 2024 in the workshop on [Adaptive Foundation Models](https://adaptive-foundation-models.org/).
+Code for [Improving In-Context Learning with Small Language Model Ensembles](https://arxiv.org/abs/2410.21868), presented at NeurIPS 2024 in the workshop on [Adaptive Foundation Models](https://adaptive-foundation-models.org/).
 
 ![schematic of ensemble super in-context learning](schematic.png)
 
